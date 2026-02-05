@@ -188,7 +188,7 @@ export function Contact() {
                       href="mailto:hello@weddingstudio.com"
                       className="text-foreground hover:text-accent transition-colors"
                     >
-                      hello@weddingstudio.com
+                      nagarajbjadar@gmail.com
                     </a>
                   </div>
                 </div>
@@ -215,7 +215,7 @@ export function Contact() {
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">Studio</p>
                     <p className="text-foreground">
-                      Mumbai, Maharashtra, India
+                      Koramangala, Bangalore, Karnataka
                     </p>
                   </div>
                 </div>

@@ -61,7 +61,7 @@ export function Footer() {
             <h4 className="font-medium mb-4">Connect With Us</h4>
             <div className="space-y-3 mb-4">
               <p className="text-primary-foreground/80 text-sm">
-                hello@eternalframes.com
+                nagarajbjadar@gmail.com
               </p>
               <p className="text-primary-foreground/80 text-sm">
                 +91 81529 48407
