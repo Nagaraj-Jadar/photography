@@ -1,28 +1,40 @@
 import { motion } from 'motion/react';
 import { Quote } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
-const testimonials = [
-  {
-    id: 1,
-    quote: "They captured our wedding with such elegance and emotion. Every photograph tells a story, and we're endlessly grateful for these timeless memories.",
-    name: 'Priya & Arjun',
-    location: 'Jaipur Wedding',
-  },
-  {
-    id: 2,
-    quote: "From our first meeting to the final film, the experience was seamless and magical. The team truly understood our vision and brought it to life beautifully.",
-    name: 'Neha & Rohan',
-    location: 'Udaipur Destination Wedding',
-  },
-  {
-    id: 3,
-    quote: "Professional, creative, and incredibly talented. They captured moments we didn't even know happened. The wedding film makes us cry every time we watch it.",
-    name: 'Ananya & Karan',
-    location: 'Mumbai Wedding',
-  },
-];
+type Testimonial = {
+  id: string;
+  client_name: string;
+  testimonial: string;
+  event_type: string | null;
+  rating: number | null;
+};
 
 export function Testimonials() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  async function fetchTestimonials() {
+    try {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('published', true)
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      setTestimonials(data || []);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <section id="testimonials" className="bg-secondary/30 py-20 md:py-32 px-6">
       <div className="mx-auto max-w-7xl">
@@ -43,8 +55,17 @@ export function Testimonials() {
         </motion.div>
 
         {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+        {loading ? (
+          <div className="text-center py-20">
+            <p className="text-muted-foreground">Loading testimonials...</p>
+          </div>
+        ) : testimonials.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-muted-foreground">No testimonials yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
               initial={{ opacity: 0, y: 30 }}
@@ -57,19 +78,20 @@ export function Testimonials() {
                 <Quote className="h-5 w-5 text-accent-foreground/70" />
               </div>
               <p className="mb-6 text-muted-foreground font-light leading-relaxed italic">
-                "{testimonial.quote}"
+                "{testimonial.testimonial}"
               </p>
               <div className="border-t border-border pt-6">
                 <p className="font-['Playfair_Display'] text-lg font-normal text-foreground">
-                  {testimonial.name}
+                  {testimonial.client_name}
                 </p>
                 <p className="text-sm text-muted-foreground font-light mt-1">
-                  {testimonial.location}
+                  {testimonial.event_type || 'Wedding'}
                 </p>
               </div>
             </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

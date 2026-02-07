@@ -1,6 +1,8 @@
 import { motion } from 'motion/react';
 import { Instagram, MessageCircle, Mail, Phone, MapPin } from 'lucide-react';
 import { useState } from 'react';
+import { supabase } from '../lib/supabase';
+import emailjs from '@emailjs/browser';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -10,13 +12,56 @@ export function Contact() {
     date: '',
     message: '',
   });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission (mock for now)
-    console.log('Form submitted:', formData);
-    alert('Thank you! We will get back to you soon.');
-    setFormData({ name: '', email: '', phone: '', date: '', message: '' });
+    setSubmitting(true);
+
+    try {
+      // Save to Supabase
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            subject: `Wedding on ${formData.date}`,
+            message: formData.message,
+          },
+        ]);
+
+      if (error) throw error;
+
+      // Send email notification using EmailJS
+      try {
+        await emailjs.send(
+          'service_4xp0nzp', // EmailJS Service ID
+          'template_contact', // EmailJS Template ID
+          {
+            to_email: 'nagarajbjadar@gmail.com',
+            from_name: formData.name,
+            from_email: formData.email,
+            phone: formData.phone,
+            wedding_date: formData.date,
+            message: formData.message,
+          },
+          'I-zBMFIl3XwyGQo7x' // EmailJS Public Key
+        );
+      } catch (emailError) {
+        console.error('Email notification failed:', emailError);
+        // Continue anyway since data is saved to Supabase
+      }
+
+      alert('Thank you! We will get back to you soon.');
+      setFormData({ name: '', email: '', phone: '', date: '', message: '' });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your message. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -150,11 +195,12 @@ export function Contact() {
 
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full rounded-full bg-primary px-8 py-4 text-primary-foreground transition-all hover:bg-primary/90 shadow-lg"
+                disabled={submitting}
+                whileHover={{ scale: submitting ? 1 : 1.02 }}
+                whileTap={{ scale: submitting ? 1 : 0.98 }}
+                className="w-full rounded-full bg-primary px-8 py-4 text-primary-foreground transition-all hover:bg-primary/90 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Inquiry
+                {submitting ? 'Sending...' : 'Send Inquiry'}
               </motion.button>
             </form>
           </motion.div>
