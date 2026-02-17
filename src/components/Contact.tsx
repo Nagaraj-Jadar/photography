@@ -1,7 +1,6 @@
 import { motion } from 'motion/react';
 import { Instagram, MessageCircle, Mail, Phone, MapPin } from 'lucide-react';
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 import emailjs from '@emailjs/browser';
 
 export function Contact() {
@@ -19,40 +18,20 @@ export function Contact() {
     setSubmitting(true);
 
     try {
-      // Save to Supabase
-      const { error } = await supabase
-        .from('contact_messages')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            subject: `Wedding on ${formData.date}`,
-            message: formData.message,
-          },
-        ]);
-
-      if (error) throw error;
-
       // Send email notification using EmailJS
-      try {
-        await emailjs.send(
-          'service_4xp0nzp', // EmailJS Service ID
-          'template_contact', // EmailJS Template ID
-          {
-            to_email: 'nagarajbjadar@gmail.com',
-            from_name: formData.name,
-            from_email: formData.email,
-            phone: formData.phone,
-            wedding_date: formData.date,
-            message: formData.message,
-          },
-          'I-zBMFIl3XwyGQo7x' // EmailJS Public Key
-        );
-      } catch (emailError) {
-        console.error('Email notification failed:', emailError);
-        // Continue anyway since data is saved to Supabase
-      }
+      await emailjs.send(
+        'service_4xp0nzp', // EmailJS Service ID
+        'template_contact', // EmailJS Template ID
+        {
+          to_email: 'nagarajbjadar@gmail.com',
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone,
+          wedding_date: formData.date,
+          message: formData.message,
+        },
+        'I-zBMFIl3XwyGQo7x' // EmailJS Public Key
+      );
 
       alert('Thank you! We will get back to you soon.');
       setFormData({ name: '', email: '', phone: '', date: '', message: '' });

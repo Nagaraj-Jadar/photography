@@ -1,7 +1,5 @@
 import { motion } from 'motion/react';
 import { Camera, Video, Heart, ImageIcon } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
 
 const iconMap: { [key: string]: any } = {
   Camera,
@@ -18,30 +16,41 @@ type Service = {
   price_range: string | null;
 };
 
-export function Services() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchServices();
-  }, []);
-
-  async function fetchServices() {
-    try {
-      const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .eq('active', true)
-        .order('display_order', { ascending: true });
-
-      if (error) throw error;
-      setServices(data || []);
-    } catch (error) {
-      console.error('Error fetching services:', error);
-    } finally {
-      setLoading(false);
-    }
+// Static services data (replace with backend later)
+const staticServices: Service[] = [
+  {
+    id: '1',
+    title: 'Wedding Photography',
+    description: 'Comprehensive coverage of your special day with candid and traditional shots. Our expert photographers capture every emotion and detail.',
+    icon: 'Camera',
+    price_range: 'Starting from ₹50,000'
+  },
+  {
+    id: '2',
+    title: 'Cinematic Videography',
+    description: 'Cinematic wedding films that tell your unique love story. High-quality 4K videos with professional editing and color grading.',
+    icon: 'Video',
+    price_range: 'Starting from ₹75,000'
+  },
+  {
+    id: '3',
+    title: 'Pre-Wedding Shoot',
+    description: 'Creative and romantic pre-wedding photoshoots at stunning locations. Capture your love story before the big day.',
+    icon: 'Heart',
+    price_range: 'Starting from ₹30,000'
+  },
+  {
+    id: '4',
+    title: 'Album Design',
+    description: 'Premium quality wedding albums with custom layouts and design. Choose from luxury leather-bound or modern acrylic options.',
+    icon: 'ImageIcon',
+    price_range: 'Starting from ₹20,000'
   }
+];
+
+export function Services() {
+  const services = staticServices;
+  const loading = false;
   return (
     <section id="services" className="bg-muted py-20 md:py-32 px-6">
       <div className="mx-auto max-w-7xl">

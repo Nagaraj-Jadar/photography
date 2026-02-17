@@ -1,6 +1,5 @@
 import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { useState } from 'react';
 
 const categories = ['All', 'wedding', 'portrait', 'event', 'commercial', 'nature', 'other'];
 
@@ -13,30 +12,62 @@ type Photo = {
   featured: boolean;
 };
 
+// Static portfolio data (replace with backend later)
+const staticPhotos: Photo[] = [
+  {
+    id: '1',
+    title: 'Royal Palace Wedding',
+    description: 'Majestic celebration at heritage palace',
+    image_url: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
+    category: 'wedding',
+    featured: true
+  },
+  {
+    id: '2',
+    title: 'Beach Ceremony',
+    description: 'Sunset vows by the ocean',
+    image_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
+    category: 'wedding',
+    featured: true
+  },
+  {
+    id: '3',
+    title: 'Traditional Rituals',
+    description: 'Capturing sacred moments',
+    image_url: 'https://images.unsplash.com/photo-1587271449687-6b8f51013f0e?w=800',
+    category: 'wedding',
+    featured: false
+  },
+  {
+    id: '4',
+    title: 'Couple Portrait',
+    description: 'Elegant pre-wedding shoot',
+    image_url: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800',
+    category: 'portrait',
+    featured: true
+  },
+  {
+    id: '5',
+    title: 'Candid Moments',
+    description: 'Natural joy and laughter',
+    image_url: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
+    category: 'wedding',
+    featured: false
+  },
+  {
+    id: '6',
+    title: 'Reception Celebration',
+    description: 'Grand evening festivities',
+    image_url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800',
+    category: 'event',
+    featured: false
+  }
+];
+
 export function Portfolio() {
   const [activeCategory, setActiveCategory] = useState('All');
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPhotos();
-  }, []);
-
-  async function fetchPhotos() {
-    try {
-      const { data, error } = await supabase
-        .from('photos')
-        .select('*')
-        .order('display_order', { ascending: true });
-
-      if (error) throw error;
-      setPhotos(data || []);
-    } catch (error) {
-      console.error('Error fetching photos:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const photos = staticPhotos;
+  const loading = false;
 
   const filteredItems =
     activeCategory === 'All'

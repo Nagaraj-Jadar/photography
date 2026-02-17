@@ -1,7 +1,5 @@
 import { motion } from 'motion/react';
 import { Quote } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
 
 type Testimonial = {
   id: string;
@@ -11,30 +9,34 @@ type Testimonial = {
   rating: number | null;
 };
 
-export function Testimonials() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchTestimonials();
-  }, []);
-
-  async function fetchTestimonials() {
-    try {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('published', true)
-        .order('display_order', { ascending: true });
-
-      if (error) throw error;
-      setTestimonials(data || []);
-    } catch (error) {
-      console.error('Error fetching testimonials:', error);
-    } finally {
-      setLoading(false);
-    }
+// Static testimonials data (replace with backend later)
+const staticTestimonials: Testimonial[] = [
+  {
+    id: '1',
+    client_name: 'Priya & Arjun',
+    testimonial: 'They captured our wedding beautifully! Every moment was perfectly preserved. The team was professional, creative, and made us feel comfortable throughout.',
+    event_type: 'Wedding',
+    rating: 5
+  },
+  {
+    id: '2',
+    client_name: 'Riya & Karan',
+    testimonial: 'Absolutely stunning work! The photos exceeded our expectations. Their attention to detail and artistic vision is remarkable.',
+    event_type: 'Wedding',
+    rating: 5
+  },
+  {
+    id: '3',
+    client_name: 'Anjali & Rahul',
+    testimonial: 'Professional, creative, and amazing. Our wedding film brings tears to our eyes every time we watch it. Highly recommended!',
+    event_type: 'Wedding',
+    rating: 5
   }
+];
+
+export function Testimonials() {
+  const testimonials = staticTestimonials;
+  const loading = false;
   return (
     <section id="testimonials" className="bg-secondary/30 py-20 md:py-32 px-6">
       <div className="mx-auto max-w-7xl">
